@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    allowedHosts: ['chainbytes.io'],
     proxy: {
       '/api': 'http://localhost:3000',
       '/ws': {

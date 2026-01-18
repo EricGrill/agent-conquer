@@ -13,10 +13,12 @@ program
   .command('start')
   .description('Start the control plane server')
   .option('--port <port>', 'Port to listen on', '3000')
+  .option('--host <host>', 'Host to bind to', '0.0.0.0')
   .option('--data-dir <path>', 'Data directory', './data')
   .action((options) => {
     const server = new ControlPlane({
       port: parseInt(options.port, 10),
+      host: options.host,
       dataDir: options.dataDir
     });
 
@@ -31,7 +33,7 @@ program
       process.exit(0);
     });
 
-    server.start(parseInt(options.port, 10));
+    server.start(parseInt(options.port, 10), options.host);
   });
 
 program.parse();

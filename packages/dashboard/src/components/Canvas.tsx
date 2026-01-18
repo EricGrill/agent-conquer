@@ -21,6 +21,7 @@ export function Canvas({ nodes, agents, onSelectAgent }: CanvasProps) {
     if (!containerRef.current) return;
 
     const app = new Application();
+    let mounted = true;
 
     const init = async () => {
       await app.init({
@@ -29,6 +30,12 @@ export function Canvas({ nodes, agents, onSelectAgent }: CanvasProps) {
         antialias: true
       });
 
+      if (!mounted) {
+        // Component unmounted during init, clean up
+        app.destroy(true);
+        return;
+      }
+
       containerRef.current!.appendChild(app.canvas);
       appRef.current = app;
     };
@@ -36,8 +43,11 @@ export function Canvas({ nodes, agents, onSelectAgent }: CanvasProps) {
     init();
 
     return () => {
-      app.destroy(true);
-      appRef.current = null;
+      mounted = false;
+      if (appRef.current) {
+        appRef.current.destroy(true);
+        appRef.current = null;
+      }
     };
   }, []);
 

@@ -10,6 +10,7 @@ import type { Event, CommandAck, CommandType, AgentStatus } from '@agent-conquer
 
 interface ControlPlaneOptions {
   port: number;
+  host: string;
   dataDir: string;
 }
 
@@ -230,12 +231,12 @@ export class ControlPlane {
     }
   }
 
-  start(port: number): void {
-    this.server.listen(port, () => {
-      console.log(`Control Plane running on port ${port}`);
-      console.log(`  API: http://localhost:${port}/api`);
-      console.log(`  Node WS: ws://localhost:${port}/ws/node`);
-      console.log(`  Dashboard WS: ws://localhost:${port}/ws/dashboard`);
+  start(port: number, host: string = '0.0.0.0'): void {
+    this.server.listen(port, host, () => {
+      console.log(`Control Plane running on ${host}:${port}`);
+      console.log(`  API: http://${host}:${port}/api`);
+      console.log(`  Node WS: ws://${host}:${port}/ws/node`);
+      console.log(`  Dashboard WS: ws://${host}:${port}/ws/dashboard`);
     });
   }
 
