@@ -7,13 +7,15 @@ interface CanvasProps {
   nodes: Node[];
   agents: Agent[];
   onSelectAgent: (agentId: string) => void;
+  onSelectNode: (nodeId: string) => void;
+  selectedNodeId?: string;
 }
 
 const HOUSE_WIDTH = 200;
 const HOUSE_HEIGHT = 150;
 const HOUSE_SPACING = 50;
 
-export function Canvas({ nodes, agents, onSelectAgent }: CanvasProps) {
+export function Canvas({ nodes, agents, onSelectAgent, onSelectNode, selectedNodeId }: CanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
 
@@ -73,9 +75,16 @@ export function Canvas({ nodes, agents, onSelectAgent }: CanvasProps) {
       // House body
       const body = new Graphics();
       const color = node.status === 'connected' ? 0x2d6a4f : 0x6c757d;
+      const isSelected = node.id === selectedNodeId;
       body.roundRect(0, 0, HOUSE_WIDTH, HOUSE_HEIGHT, 10);
       body.fill(color);
-      body.stroke({ width: 2, color: node.status === 'connected' ? 0x40916c : 0x495057 });
+      body.stroke({ width: isSelected ? 3 : 2, color: isSelected ? 0xfca311 : (node.status === 'connected' ? 0x40916c : 0x495057) });
+      body.eventMode = 'static';
+      body.cursor = 'pointer';
+      body.on('pointerdown', (e) => {
+        e.stopPropagation();
+        onSelectNode(node.id);
+      });
       house.addChild(body);
 
       // Roof
@@ -113,7 +122,10 @@ export function Canvas({ nodes, agents, onSelectAgent }: CanvasProps) {
         robot.position.set(robotX, robotY);
         robot.eventMode = 'static';
         robot.cursor = 'pointer';
-        robot.on('pointerdown', () => onSelectAgent(agent.id));
+        robot.on('pointerdown', (e) => {
+          e.stopPropagation();
+          onSelectAgent(agent.id);
+        });
 
         // Robot body
         const robotBody = new Graphics();
@@ -183,7 +195,7 @@ export function Canvas({ nodes, agents, onSelectAgent }: CanvasProps) {
       }
     });
 
-  }, [nodes, agents, onSelectAgent]);
+  }, [nodes, agents, onSelectAgent, onSelectNode, selectedNodeId]);
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 }

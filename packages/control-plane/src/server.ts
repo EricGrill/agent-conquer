@@ -193,6 +193,13 @@ export class ControlPlane {
             this.router.routeCommand(command);
           }
         }
+
+        // Handle node commands from dashboard (e.g., start_agent)
+        if (message.action === 'node_command') {
+          const { nodeId, type, payload } = message;
+          const command = this.router.createCommand(type, nodeId, payload);
+          this.router.routeCommand(command);
+        }
       } catch (error) {
         console.error('Failed to process dashboard message:', error);
       }

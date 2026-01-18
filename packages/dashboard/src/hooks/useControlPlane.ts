@@ -140,6 +140,17 @@ export function useControlPlane() {
     }
   }, []);
 
+  const sendNodeCommand = useCallback((nodeId: string, type: string, payload: Record<string, unknown> = {}) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
+        action: 'node_command',
+        nodeId,
+        type,
+        payload
+      }));
+    }
+  }, []);
+
   useEffect(() => {
     connect();
 
@@ -155,6 +166,7 @@ export function useControlPlane() {
     connected: state.connected,
     nodes: Array.from(state.nodes.values()),
     agents: Array.from(state.agents.values()),
-    sendCommand
+    sendCommand,
+    sendNodeCommand
   };
 }

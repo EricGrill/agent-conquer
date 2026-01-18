@@ -1,16 +1,29 @@
 // packages/dashboard/src/App.tsx
 import { useState } from 'react';
 import { Canvas } from './components/Canvas';
+import { NodeDetailsCard } from './components/NodeDetailsCard';
 import { useControlPlane } from './hooks/useControlPlane';
-import type { Agent } from '@agent-conquer/shared';
+import type { Agent, Node } from '@agent-conquer/shared';
 
 export function App() {
-  const { connected, nodes, agents, sendCommand } = useControlPlane();
+  const { connected, nodes, agents, sendCommand, sendNodeCommand } = useControlPlane();
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   const handleSelectAgent = (agentId: string) => {
     const agent = agents.find((a) => a.id === agentId);
     setSelectedAgent(agent ?? null);
+    setSelectedNode(null);
+  };
+
+  const handleSelectNode = (nodeId: string) => {
+    const node = nodes.find((n) => n.id === nodeId);
+    setSelectedNode(node ?? null);
+    setSelectedAgent(null);
+  };
+
+  const handleStartAgent = (nodeId: string, agentName: string) => {
+    sendNodeCommand(nodeId, 'start_agent', { name: agentName });
   };
 
   return (
@@ -45,6 +58,8 @@ export function App() {
             nodes={nodes}
             agents={agents}
             onSelectAgent={handleSelectAgent}
+            onSelectNode={handleSelectNode}
+            selectedNodeId={selectedNode?.id}
           />
         </div>
 
@@ -146,6 +161,16 @@ export function App() {
               Close
             </button>
           </aside>
+        )}
+
+        {selectedNode && (
+          <NodeDetailsCard
+            node={selectedNode}
+            agents={agents.filter((a) => a.nodeId === selectedNode.id)}
+            onClose={() => setSelectedNode(null)}
+            onSelectAgent={handleSelectAgent}
+            onStartAgent={handleStartAgent}
+          />
         )}
       </main>
     </div>
