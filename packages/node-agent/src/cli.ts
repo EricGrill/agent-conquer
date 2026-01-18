@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { NodeAgent } from './agent.js';
 
 const program = new Command();
 
@@ -14,8 +15,24 @@ program
   .option('--name <name>', 'Node name', 'unnamed-node')
   .option('--data-dir <path>', 'Data directory', './.agent-conquer')
   .action(async (options) => {
-    console.log(`Connecting to ${options.server} as "${options.name}"...`);
-    // Implementation will come in later tasks
+    const agent = new NodeAgent({
+      serverUrl: options.server,
+      nodeName: options.name,
+      dataDir: options.dataDir
+    });
+
+    // Handle shutdown gracefully
+    process.on('SIGINT', () => {
+      agent.stop();
+      process.exit(0);
+    });
+
+    process.on('SIGTERM', () => {
+      agent.stop();
+      process.exit(0);
+    });
+
+    agent.start();
   });
 
 program.parse();

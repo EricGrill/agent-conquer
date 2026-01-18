@@ -14,11 +14,12 @@
   },
   "dependencies": {
     "@agent-conquer/shared": "*",
+    "commander": "^11.1.0",
     "node-pty": "^1.0.0",
-    "ws": "^8.14.0",
-    "commander": "^11.1.0"
+    "ws": "^8.14.0"
   },
   "devDependencies": {
+    "@types/node": "^25.0.9",
     "@types/ws": "^8.5.10"
   }
 }
