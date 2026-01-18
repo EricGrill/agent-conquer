@@ -1,5 +1,5 @@
 // packages/dashboard/src/App.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Canvas } from './components/Canvas';
 import { useControlPlane } from './hooks/useControlPlane';
 import type { Agent } from '@agent-conquer/shared';

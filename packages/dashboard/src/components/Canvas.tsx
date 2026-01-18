@@ -1,5 +1,5 @@
 // packages/dashboard/src/components/Canvas.tsx
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Application, Container, Graphics, Text, TextStyle } from 'pixi.js';
 import type { Node, Agent } from '@agent-conquer/shared';
 
